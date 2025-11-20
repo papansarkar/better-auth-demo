@@ -29,7 +29,7 @@ model Post {
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(uuid())
   
   name          String
   email         String
@@ -48,7 +48,7 @@ model User {
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(uuid())
   token     String
 
   ipAddress String?
@@ -65,7 +65,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id@default(uuid())
   
   accountId             String
   providerId            String
@@ -86,7 +86,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(uuid())
   identifier String
   value      String
   

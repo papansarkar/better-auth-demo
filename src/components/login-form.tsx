@@ -6,8 +6,10 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const LoginForm = () => {
+  const [isPending, setIsPending] = useState(false)
  const router = useRouter()
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -29,7 +31,7 @@ export const LoginForm = () => {
         password: password.toString().trim(),
       },
       {
-        onRequest: () => {},
+        onRequest: () => {setIsPending(true)},
         onSuccess: () => {
           toast.success("Login successful!");
           router.push("/profile")
@@ -38,7 +40,7 @@ export const LoginForm = () => {
           toast.error(ctx.error.message);
           console.error(ctx.error.message)
         },
-        onResponse: () => {},
+        onResponse: () => {setIsPending(false)},
       }
     );
   }
@@ -63,8 +65,8 @@ export const LoginForm = () => {
         </Label>
         <Input id="password" name="password" type="password" />
       </div>
-      <Button type="submit" className="w-full">
-        Login
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? "Logging in..." : "Login"}
       </Button>
     </form>
   );
