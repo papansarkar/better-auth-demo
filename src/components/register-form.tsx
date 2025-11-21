@@ -4,46 +4,62 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { signUp } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signUpEmailAction } from "@/actions/sign-up-email.action";
 
 export const RegisterForm = () => {
-  const [isPending, setIsPending] = useState(false)
-  const router = useRouter()
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setIsPending(true);
     // Handle form submission logic here
     const formData = new FormData(event.target as HTMLFormElement);
 
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const password = formData.get("password");
+    const { error } = await signUpEmailAction(formData);
 
-    if (!name || !email || !password) {
-      toast.error("Please fill in all fields.");
-      return;
+    if (error) {
+      toast.error(error);
+      setIsPending(false);
+    } else {
+      toast.success("Registration Successful!");
+      router.push("/auth/login");
     }
 
-    await signUp.email(
-      {
-        name: name.toString().trim(),
-        email: email.toString().trim(),
-        password: password.toString().trim(),
-      },
-      {
-        onRequest: () => {setIsPending(true)},
-        onSuccess: () => {
-          toast.success("Registration successful!");
-          router.push("/auth/login")
-        },
-        onError: (ctx) => {
-          toast.error(ctx.error.message);
-          console.error(ctx.error.message)
-        },
-        onResponse: () => {setIsPending(false)},
-      }
-    );
+    // const name = String(formData.get("name") || "").trim();
+    // const email = String(formData.get("email") || "").trim();
+    // const password = String(formData.get("password") || "").trim();
+
+    // if (!name || !email || !password) {
+    //   toast.error("Please fill in all fields.");
+    //   return;
+    // }
+
+    // await signUp.email(
+    //   {
+    //     name,
+    //     email,
+    //     password,
+    //   },
+    //   {
+    //     onRequest: () => {
+    //       setIsPending(true);
+    //     },
+    //     onSuccess: () => {
+    //       toast.success("Registration successful!");
+    //       router.push("/auth/login");
+    //     },
+    //     onError: (ctx) => {
+    //       toast.error(ctx.error.message);
+    //       console.error(ctx.error.message);
+    //     },
+    //     onResponse: () => {
+    //       setIsPending(false);
+    //     },
+    //   }
+    // );
   }
   return (
     <form onSubmit={handleSubmit} className="max-w-sm w-full space-y-4">
