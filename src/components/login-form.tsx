@@ -26,7 +26,7 @@ export const LoginForm = () => {
       setIsPending(false);
     } else {
       toast.success("Login Successful!");
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     }
   }
   return (
